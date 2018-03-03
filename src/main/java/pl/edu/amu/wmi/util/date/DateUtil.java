@@ -1,14 +1,14 @@
 package pl.edu.amu.wmi.util.date;
 
-import pl.edu.amu.wmi.util.date.DatePair;
-import pl.edu.amu.wmi.util.date.DateRange;
-
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class DateUtil {
+
+    private DateUtil() {
+    }
 
 
     public static int currentIntTimestamp() {
