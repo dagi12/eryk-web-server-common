@@ -14,26 +14,25 @@ public class ReflectionUtil {
 
     }
 
-    public static void merge(Object obj, Object update) {
-        if (!obj.getClass().isAssignableFrom(update.getClass())) {
+    public static <T> void merge(T target, T update) {
+        if (!target.getClass().isAssignableFrom(update.getClass())) {
             LOGGER.warn("Obiekty nie są tego samego typu.");
             return;
         }
 
-        Method[] methods = obj.getClass().getMethods();
+        Method[] methods = target.getClass().getMethods();
 
         for (Method fromMethod : methods) {
-            if (fromMethod.getDeclaringClass().equals(obj.getClass())
-                    && fromMethod.getName().startsWith("is")) {
+            if (fromMethod.getDeclaringClass().equals(target.getClass()) && !fromMethod.getName().startsWith("is")) {
 
                 String fromName = fromMethod.getName();
                 String toName = StringUtils.replaceOnce(fromName, "is", "set");
 
                 try {
-                    Method toMetod = obj.getClass().getMethod(toName, fromMethod.getReturnType());
+                    Method toMetod = target.getClass().getMethod(toName, fromMethod.getReturnType());
                     Object value = fromMethod.invoke(update, (Object[]) null);
                     if (value != null) {
-                        toMetod.invoke(obj, value);
+                        toMetod.invoke(target, value);
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Nie można zmergować obiektu.", e);
