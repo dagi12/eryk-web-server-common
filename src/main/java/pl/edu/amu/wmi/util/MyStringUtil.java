@@ -1,5 +1,7 @@
 package pl.edu.amu.wmi.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.net.URI;
 
 /**
@@ -41,6 +43,10 @@ public class MyStringUtil {
             extension = fileName.substring(i + 1);
         }
         return extension;
+    }
+
+    public static boolean isNotWhitespace(String s) {
+        return !StringUtils.isEmpty(s) && s.trim().length() > 0;
     }
 
     public static String firstAndSecondName(String firstName, String secondName) {
