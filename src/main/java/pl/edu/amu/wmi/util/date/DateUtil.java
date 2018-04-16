@@ -51,6 +51,11 @@ public class DateUtil {
         return (int) TimeUnit.MILLISECONDS.toHours(diff);
     }
 
+    public static int minuteDifference(Timestamp dateFrom, Timestamp dateTo) {
+        long diff = dateTo.getTime() - dateFrom.getTime();
+        return (int) TimeUnit.MILLISECONDS.toMinutes(diff);
+    }
+
     private static void clearDay(Calendar calendar) {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
