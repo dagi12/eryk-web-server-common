@@ -1,6 +1,5 @@
 package pl.edu.amu.wmi.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +24,7 @@ public class ReflectionUtil {
         for (Method fromMethod : methods) {
             if (fromMethod.getDeclaringClass().equals(target.getClass()) && !fromMethod.getName().startsWith("is")) {
 
-                String fromName = fromMethod.getName();
-                String toName = StringUtils.replaceOnce(fromName, "is", "set");
+                String toName = fromMethod.getName().replaceFirst("is", "set");
 
                 try {
                     Method toMetod = target.getClass().getMethod(toName, fromMethod.getReturnType());

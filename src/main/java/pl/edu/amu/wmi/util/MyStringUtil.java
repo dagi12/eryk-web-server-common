@@ -1,8 +1,8 @@
 package pl.edu.amu.wmi.util;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.net.URI;
+
+import static ch.qos.logback.core.util.OptionHelper.isEmpty;
 
 /**
  * Stworzone przez Eryk Mariankowski dnia 21.07.2017.
@@ -46,7 +46,7 @@ public class MyStringUtil {
     }
 
     public static boolean isNotWhitespace(String s) {
-        return !StringUtils.isEmpty(s) && s.trim().length() > 0;
+        return !isEmpty(s) && s.trim().length() > 0;
     }
 
     public static String firstAndSecondName(String firstName, String secondName) {
@@ -56,5 +56,18 @@ public class MyStringUtil {
     public static String hostFromDataSourceUrl(String url) {
         return URI.create(url.substring(5).split(";")[0].split("\\\\")[0]).getHost();
     }
+
+    public static <E extends Enum<E>> boolean isValidEnum(final Class<E> enumClass, final String enumName) {
+        if (enumName == null) {
+            return false;
+        }
+        try {
+            Enum.valueOf(enumClass, enumName);
+            return true;
+        } catch (final IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
 
 }
