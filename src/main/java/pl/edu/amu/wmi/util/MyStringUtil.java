@@ -2,7 +2,6 @@ package pl.edu.amu.wmi.util;
 
 import java.net.URI;
 
-import static ch.qos.logback.core.util.OptionHelper.isEmpty;
 
 /**
  * Stworzone przez Eryk Mariankowski dnia 21.07.2017.
@@ -46,7 +45,7 @@ public class MyStringUtil {
     }
 
     public static boolean isNotWhitespace(String s) {
-        return !isEmpty(s) && s.trim().length() > 0;
+        return !((s == null) || "".equals(s)) && s.trim().length() > 0;
     }
 
     public static String firstAndSecondName(String firstName, String secondName) {
