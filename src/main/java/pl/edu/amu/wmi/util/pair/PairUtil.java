@@ -1,7 +1,5 @@
 package pl.edu.amu.wmi.util.pair;
 
-import javafx.util.Pair;
-
 /**
  * Stworzone przez Eryk Mariankowski dnia 09.05.18.
  */
