@@ -69,4 +69,25 @@ public class MyStringUtil {
     }
 
 
+    public static String underscoreToCamelCase(String s) {
+        String inputString = s.toLowerCase();
+        StringBuilder builder = new StringBuilder();
+        boolean doUppercase = false;
+        for (int i = 0; i < inputString.length(); i++) {
+            char c = inputString.charAt(i);
+            if (c != '_') {
+                if (doUppercase) {
+                    builder.append(Character.toUpperCase(c));
+                    doUppercase = false;
+                } else {
+                    builder.append(c);
+                }
+            } else {
+                doUppercase = true;
+            }
+        }
+        return builder.toString();
+    }
+
+
 }
