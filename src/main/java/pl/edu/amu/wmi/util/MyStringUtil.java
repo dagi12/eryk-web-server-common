@@ -1,5 +1,7 @@
 package pl.edu.amu.wmi.util;
 
+import org.hibernate.internal.util.StringHelper;
+
 import java.net.URI;
 
 
@@ -90,4 +92,10 @@ public class MyStringUtil {
     }
 
 
+    public static String stripNonAlphaNumeric(String string) {
+        if (StringHelper.isEmpty(string)) {
+            return null;
+        }
+        return string.replaceAll("[^A-Za-z0-9 ]", "");
+    }
 }
