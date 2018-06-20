@@ -47,3 +47,7 @@ List files sorted by loc
 ```bash
 git ls-files | xargs wc -l | sort -n -k 1 | tail -n 20
 ```
+Delete empty directories
+```bash
+find . -type d -empty -delete
+```
