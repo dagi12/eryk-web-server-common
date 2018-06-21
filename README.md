@@ -37,7 +37,7 @@ git grep xxx $(git rev-list --all)
 ```
 Dependency tree
 ```bash
-./gradlew app:dependencies | grep -i -B 10 xxx
+./gradlew dependencies | grep -i -B 10 xxx
 ```
 Update last commit
 ```bash
@@ -50,4 +50,15 @@ git ls-files | xargs wc -l | sort -n -k 1 | tail -n 20
 Delete empty directories
 ```bash
 find . -type d -empty -delete
+```
+Show only blank lines changes
+```bash
+#!/usr/bin/env bash
+function main() {
+    for f in `git diff --name-only`; do
+        MY_DIFF=$(git diff --ignore-blank-lines ${f} | cat)
+        if [[ ! ${MY_DIFF} == "" ]]; then echo "${f}"; fi
+    done
+}
+diff <(main) <(git diff --name-only)
 ```
