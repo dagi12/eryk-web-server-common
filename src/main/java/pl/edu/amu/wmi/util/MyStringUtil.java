@@ -1,14 +1,20 @@
 package pl.edu.amu.wmi.util;
 
 import org.hibernate.internal.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 
 
 /**
  * Stworzone przez Eryk Mariankowski dnia 21.07.2017.
  */
 public class MyStringUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyStringUtil.class);
 
     private MyStringUtil() {
     }
@@ -70,7 +76,6 @@ public class MyStringUtil {
         }
     }
 
-
     public static String underscoreToCamelCase(String s) {
         String inputString = s.toLowerCase();
         StringBuilder builder = new StringBuilder();
@@ -91,11 +96,20 @@ public class MyStringUtil {
         return builder.toString();
     }
 
-
     public static String stripNonAlphaNumeric(String string) {
         if (StringHelper.isEmpty(string)) {
             return null;
         }
         return string.replaceAll("[^A-Za-z0-9 ]", "");
+    }
+
+    public static String stripPathFromUrl(String s) {
+        try {
+            URL url = new URL(s);
+            return url.getProtocol() + "://" + url.getHost() + ":" + url.getPort();
+        } catch (MalformedURLException e) {
+            LOGGER.error("Error when stripping path from url.", e);
+            return null;
+        }
     }
 }
