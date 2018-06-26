@@ -62,3 +62,16 @@ function main() {
 }
 diff <(main) <(git diff --name-only)
 ```
+Split repositories
+```bash
+git filter-branch --tree-filter 'rm -rf zamowienia-server-core' --prune-empty HEAD
+git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
+git commit -m 'Removing zamowienia-server-core from git history'
+git gc
+git push origin master --force
+```
+```bash
+git filter-branch --prune-empty --subdirectory-filter zamowienia-server-core
+git remote set-url origin new-repo
+git push -u origin master
+```
