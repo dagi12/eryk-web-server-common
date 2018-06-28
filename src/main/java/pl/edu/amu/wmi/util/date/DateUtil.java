@@ -1,5 +1,7 @@
 package pl.edu.amu.wmi.util.date;
 
+import org.apache.commons.lang3.time.DateUtils;
+
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
@@ -8,86 +10,6 @@ import java.util.concurrent.TimeUnit;
 public class DateUtil {
 
     private DateUtil() {
-    }
-
-    private static final int SEMI_MONTH = 1001;
-
-    private static final int[][] fields = {
-            {Calendar.MILLISECOND},
-            {Calendar.SECOND},
-            {Calendar.MINUTE},
-            {Calendar.HOUR_OF_DAY, Calendar.HOUR},
-            {Calendar.DATE, Calendar.DAY_OF_MONTH, Calendar.AM_PM
-                    /* Calendar.DAY_OF_YEAR, Calendar.DAY_OF_WEEK, Calendar.DAY_OF_WEEK_IN_MONTH */
-            },
-            {Calendar.MONTH, SEMI_MONTH},
-            {Calendar.YEAR},
-            {Calendar.ERA}};
-
-    public static Date truncate(final Date date, final int field) {
-        final Calendar gval = Calendar.getInstance();
-        gval.setTime(date);
-        modify(gval, field);
-        return gval.getTime();
-    }
-
-    // copied from apache commons
-    @SuppressWarnings("squid:S3776")
-    private static void modify(final Calendar val, final int field) {
-        final Date date = val.getTime();
-        long time = date.getTime();
-        boolean done = false;
-        final int millisecs = val.get(Calendar.MILLISECOND);
-        time = time - millisecs;
-        if (field == Calendar.SECOND) {
-            done = true;
-        }
-        final int seconds = val.get(Calendar.SECOND);
-        time = time - (seconds * 1000L);
-        if (field == Calendar.MINUTE) {
-            done = true;
-        }
-        final int minutes = val.get(Calendar.MINUTE);
-        if (!done && (minutes < 30)) {
-            time = time - (minutes * 60000L);
-        }
-        if (date.getTime() != time) {
-            date.setTime(time);
-            val.setTime(date);
-        }
-        for (final int[] aField : fields) {
-            int offset = 0;
-            boolean offsetSet = false;
-            switch (field) {
-                case SEMI_MONTH:
-                    if (aField[0] == Calendar.DATE) {
-                        offset = val.get(Calendar.DATE) - 1;
-                        if (offset >= 15) {
-                            offset -= 15;
-                        }
-                        offsetSet = true;
-                    }
-                    break;
-                case Calendar.AM_PM:
-                    if (aField[0] == Calendar.HOUR_OF_DAY) {
-                        offset = val.get(Calendar.HOUR_OF_DAY);
-                        if (offset >= 12) {
-                            offset -= 12;
-                        }
-                        offsetSet = true;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            if (!offsetSet) {
-                final int min = val.getActualMinimum(aField[0]);
-                offset = val.get(aField[0]) - min;
-            }
-            if (offset != 0) {
-                val.set(aField[0], val.get(aField[0]) - offset);
-            }
-        }
     }
 
     public static int currentIntTimestamp() {
@@ -224,11 +146,19 @@ public class DateUtil {
         cal1.setTime(date);
         cal2.setTime(new Date());
         return !(cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
+            cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
     }
 
     public static Timestamp toTimestamp(Date date) {
         return new Timestamp(date.getTime());
+    }
+
+    public static Timestamp currentTimestampWithoutHours() {
+        return new Timestamp(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH).getTime());
+    }
+
+    public static Timestamp truncateSeconds(Timestamp timestamp) {
+        return new Timestamp(DateUtils.truncate(new Date(timestamp.getTime()), Calendar.MINUTE).getTime());
     }
 
 }
