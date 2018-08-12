@@ -15,14 +15,12 @@ public interface CrudController<T> {
 
     @RequestMapping(method = RequestMethod.POST)
     default T create(@RequestBody T t) {
-        getCrudService().create(t);
-        return t;
+        return getCrudService().create(t);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     default T update(@PathVariable int id, @RequestBody T t) {
-        getCrudService().update(id, t);
-        return t;
+        return getCrudService().update(id, t);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
