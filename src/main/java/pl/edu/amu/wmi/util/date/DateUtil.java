@@ -1,13 +1,19 @@
 package pl.edu.amu.wmi.util.date;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class DateUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DateUtil.class);
 
     private DateUtil() {
     }
@@ -146,7 +152,7 @@ public class DateUtil {
         cal1.setTime(date);
         cal2.setTime(new Date());
         return !(cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-            cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
     }
 
     public static Timestamp toTimestamp(Date date) {
@@ -159,6 +165,15 @@ public class DateUtil {
 
     public static Timestamp truncateSeconds(Timestamp timestamp) {
         return new Timestamp(DateUtils.truncate(new Date(timestamp.getTime()), Calendar.MINUTE).getTime());
+    }
+
+    public static Timestamp timestampFromString(String source) {
+        try {
+            return new Timestamp(DateFormat.getDateInstance().parse(source).getTime());
+        } catch (ParseException e) {
+            LOGGER.error("Cannot parse", e);
+        }
+        return null;
     }
 
 }

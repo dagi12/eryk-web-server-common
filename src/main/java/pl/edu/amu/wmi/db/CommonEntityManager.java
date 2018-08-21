@@ -50,6 +50,10 @@ public class CommonEntityManager {
         return query;
     }
 
+    public void detach(Object object) {
+        entityManager.detach(object);
+    }
+
     public StoredProcedureQuery procedureQuery(String procedureName, Object... parameters) {
         StoredProcedureQuery query = entityManager.createNamedStoredProcedureQuery(procedureName);
         return procedureQueryInternal(query, parameters);
@@ -65,8 +69,8 @@ public class CommonEntityManager {
     public <T, S> Pair<T, S> procedureResultPair(String procedureName, Object... parameters) {
         StoredProcedureQuery query = procedureQuery(procedureName, parameters);
         return PairUtil.of(
-            (T) query.getOutputParameterValue(parameters.length + 1),
-            (S) query.getOutputParameterValue(parameters.length + 2)
+                (T) query.getOutputParameterValue(parameters.length + 1),
+                (S) query.getOutputParameterValue(parameters.length + 2)
         );
     }
 
@@ -95,16 +99,16 @@ public class CommonEntityManager {
 
     public <T> List<T> all(Class<T> tClass) {
         return entityManager
-            .createQuery(commonQuery(tClass))
-            .getResultList();
+                .createQuery(commonQuery(tClass))
+                .getResultList();
     }
 
 
     @SuppressWarnings("unchecked")
     public <T> List<T> allProjection(Class tClass, String name) {
         return entityManager
-            .createQuery(commonQueryProjection(tClass, name))
-            .getResultList();
+                .createQuery(commonQueryProjection(tClass, name))
+                .getResultList();
     }
 
     public <T, S> List<T> allOrder(Class<T> tClass, SingularAttribute<T, S> col, boolean asc) {
@@ -112,12 +116,12 @@ public class CommonEntityManager {
         CriteriaQuery<T> query = builder.createQuery(tClass);
         Root<T> root = query.from(tClass);
         CriteriaQuery<T> ordered = query
-            .orderBy(asc ?
-                builder.asc(root.get(col)) :
-                builder.desc(root.get(col)));
+                .orderBy(asc ?
+                        builder.asc(root.get(col)) :
+                        builder.desc(root.get(col)));
         return entityManager
-            .createQuery(ordered.select(root))
-            .getResultList();
+                .createQuery(ordered.select(root))
+                .getResultList();
 
     }
 
@@ -157,9 +161,9 @@ public class CommonEntityManager {
         CriteriaBuilder qb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> cq = qb.createQuery(Long.class);
         return entityManager
-            .createQuery(cq.select(qb.count(cq.from(tClass))))
-            .getSingleResult()
-            .intValue();
+                .createQuery(cq.select(qb.count(cq.from(tClass))))
+                .getSingleResult()
+                .intValue();
     }
 
 
@@ -169,9 +173,9 @@ public class CommonEntityManager {
         Root<T> variableRoot = query.from(tClass);
         query.orderBy(builder.desc(variableRoot.get(col)));
         return entityManager
-            .createQuery(query.select(variableRoot))
-            .setMaxResults(1)
-            .getSingleResult();
+                .createQuery(query.select(variableRoot))
+                .setMaxResults(1)
+                .getSingleResult();
     }
 
 
