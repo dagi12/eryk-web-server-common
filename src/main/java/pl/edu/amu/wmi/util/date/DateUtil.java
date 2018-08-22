@@ -176,4 +176,9 @@ public class DateUtil {
         return null;
     }
 
+    public static long benchmark(String context, long timestamp) {
+        long newTimestamp = System.currentTimeMillis();
+        LOGGER.info("{}, time: {}", context, newTimestamp - timestamp);
+        return newTimestamp;
+    }
 }
