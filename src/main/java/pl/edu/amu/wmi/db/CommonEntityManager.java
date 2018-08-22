@@ -78,7 +78,8 @@ public class CommonEntityManager {
     public <T> List<T> dynamicProcedure(Class<T> resultClasses, String procedureName, Object... parameters) {
         StoredProcedureQuery query = entityManager.createStoredProcedureQuery(procedureName, resultClasses);
         for (int i = 0; i < parameters.length; ++i) {
-            query.registerStoredProcedureParameter(i + 1, parameters[i].getClass(), ParameterMode.IN);
+            Class type = parameters[i] != null ? parameters[i].getClass() : String.class;
+            query.registerStoredProcedureParameter(i + 1, type, ParameterMode.IN);
         }
         return procedureQueryInternal(query, parameters).getResultList();
     }
