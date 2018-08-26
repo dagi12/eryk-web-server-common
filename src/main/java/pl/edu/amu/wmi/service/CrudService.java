@@ -1,5 +1,6 @@
 package pl.edu.amu.wmi.service;
 
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import pl.edu.amu.wmi.db.CommonEntityManager;
 
 /**
@@ -26,6 +27,7 @@ public interface CrudService<T> {
     }
 
     default void delete(int id) {
-        getCommonEntityManager().delete(gettClass(), id);
+        throw new InvalidDataAccessApiUsageException("Make sure class has audit annotation");
+//        getCommonEntityManager().delete(gettClass(), id);
     }
 }
