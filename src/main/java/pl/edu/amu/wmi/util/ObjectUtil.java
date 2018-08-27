@@ -2,6 +2,7 @@ package pl.edu.amu.wmi.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.Transient;
 import java.lang.reflect.Field;
@@ -31,6 +32,21 @@ public class ObjectUtil {
             currentClass = currentClass.getSuperclass();
         } while (currentClass != null);
         return false;
+    }
+
+
+    @NonNull
+    public static Class<?> getFieldType(Class<?> clazz, String property) {
+        Class<?> currentClass = clazz;
+        do {
+            for (Field field : currentClass.getDeclaredFields()) {
+                if (field.getName().equals(property)) {
+                    return field.getType();
+                }
+            }
+            currentClass = currentClass.getSuperclass();
+        } while (currentClass != null);
+        throw new RuntimeException("Wrong property name");
     }
 
     public static boolean hasOwnProperty(Class<?> clazz, List<String> propertyList) {
