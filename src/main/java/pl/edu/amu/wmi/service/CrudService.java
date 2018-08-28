@@ -12,10 +12,10 @@ public interface CrudService<T> {
 
     Class<T> gettClass();
 
-    default T create(T t) {
-        setDefaultValues(t);
-        getCommonEntityManager().save(t);
-        return t;
+    default T create(T item) {
+        setDefaultValues(item);
+        getCommonEntityManager().save(item);
+        return item;
     }
 
     default void setDefaultValues(T t) {
