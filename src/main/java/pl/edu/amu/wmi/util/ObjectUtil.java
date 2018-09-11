@@ -3,6 +3,7 @@ package pl.edu.amu.wmi.util;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.lang.NonNull;
+import pl.edu.amu.wmi.model.MyRuntimeException;
 
 import javax.persistence.Transient;
 import java.lang.reflect.Field;
@@ -11,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ObjectUtil {
+public final class ObjectUtil {
 
     private ObjectUtil() {
 
@@ -21,7 +22,7 @@ public class ObjectUtil {
         return aClass.getPackage().getName().replace(".", "/");
     }
 
-    public static boolean hasOwnProperty(Class<?> clazz, String property) {
+    public static boolean doNotOwnProperty(Class<?> clazz, String property) {
         Class<?> currentClass = clazz;
         do {
             for (Field field : currentClass.getDeclaredFields()) {
@@ -46,12 +47,12 @@ public class ObjectUtil {
             }
             currentClass = currentClass.getSuperclass();
         } while (currentClass != null);
-        throw new RuntimeException("Wrong property name");
+        throw new MyRuntimeException("Wrong property name");
     }
 
-    public static boolean hasOwnProperty(Class<?> clazz, List<String> propertyList) {
+    public static boolean doNotOwnProperty(Class<?> clazz, List<String> propertyList) {
         for (String property : propertyList) {
-            if (!hasOwnProperty(clazz, property)) {
+            if (doNotOwnProperty(clazz, property)) {
                 return false;
             }
         }
@@ -61,8 +62,8 @@ public class ObjectUtil {
     public static <T> void iterateProperties(Class<T> tClass, Consumer<Field> consumer) {
         for (Field field : tClass.getDeclaredFields()) {
             if (!Modifier.isFinal(field.getModifiers()) &&
-                field.getAnnotation(JsonIgnore.class) == null &&
-                field.getAnnotation(Transient.class) == null) {
+                    field.getAnnotation(JsonIgnore.class) == null &&
+                    field.getAnnotation(Transient.class) == null) {
                 consumer.accept(field);
             }
         }
@@ -71,6 +72,7 @@ public class ObjectUtil {
     @SuppressWarnings("unchecked")
     public static <T, S> Class<T> getGenericType(Object o, Class<S> tClass, int param) {
         Class<?>[] classes = GenericTypeResolver.resolveTypeArguments(o.getClass(), tClass);
+        // should stay that, suppress sonar
         if (classes != null) {
             return (Class<T>) Arrays.asList(classes).get(param);
         }

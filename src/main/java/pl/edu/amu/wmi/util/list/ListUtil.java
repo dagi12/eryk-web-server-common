@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.toMap;
 /**
  * Stworzone przez Eryk Mariankowski dnia 19.04.18.
  */
-public class ListUtil {
+public final class ListUtil {
 
     private ListUtil() {
 

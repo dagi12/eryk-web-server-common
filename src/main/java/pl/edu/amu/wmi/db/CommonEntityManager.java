@@ -5,6 +5,7 @@ import org.hibernate.jdbc.Work;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.edu.amu.wmi.model.MyRuntimeException;
 import pl.edu.amu.wmi.util.pair.Pair;
 import pl.edu.amu.wmi.util.pair.PairUtil;
 
@@ -39,7 +40,9 @@ public class CommonEntityManager {
     @SuppressWarnings("unchecked")
     public <T> T executeProcedureSingle(String procedureName, Object... parameters) {
         List list = executeProcedure(procedureName, parameters);
-        assert list.size() == 1;
+        if (list.size() != 1) {
+            throw new MyRuntimeException("Procedure result is not single");
+        }
         return (T) list.get(0);
     }
 

@@ -3,7 +3,7 @@ package pl.edu.amu.wmi.util.pair;
 /**
  * Stworzone przez Eryk Mariankowski dnia 09.05.18.
  */
-public class PairUtil {
+public final class PairUtil {
 
     private PairUtil() {
 
