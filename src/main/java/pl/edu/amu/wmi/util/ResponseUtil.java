@@ -3,6 +3,8 @@ package pl.edu.amu.wmi.util;
 import org.springframework.http.ResponseEntity;
 import pl.edu.amu.wmi.model.GeneralResponse;
 
+import java.util.function.Supplier;
+
 
 /**
  * Created by erykmariankowski on 17.06.2018.
@@ -30,5 +32,15 @@ public class ResponseUtil {
 
     public static ResponseEntity<GeneralResponse> responseGeneral(boolean t) {
         return t ? ResponseEntity.ok(new GeneralResponse()) : ResponseEntity.badRequest().build();
+    }
+
+    public static ResponseEntity<?> responseSupplier(Supplier<String> supplier) {
+        String msg = supplier.get();
+        return msg == null ? ResponseEntity.ok().build() : ResponseEntity.badRequest().body(msg);
+    }
+
+    public static ResponseEntity<GeneralResponse> responseGeneral(Supplier<String> supplier) {
+        String msg = supplier.get();
+        return msg == null ? ResponseEntity.ok(new GeneralResponse()) : ResponseEntity.badRequest().body(new GeneralResponse(msg));
     }
 }
