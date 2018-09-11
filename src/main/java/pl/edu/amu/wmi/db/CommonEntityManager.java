@@ -11,6 +11,7 @@ import pl.edu.amu.wmi.util.pair.PairUtil;
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -98,12 +99,14 @@ public class CommonEntityManager {
         return query.select(variableRoot.get(name));
     }
 
-    public <T> List<T> all(Class<T> tClass) {
+    public <T> TypedQuery<T> allTypedQuery(Class<T> tClass) {
         return entityManager
-                .createQuery(commonQuery(tClass))
-                .getResultList();
+                .createQuery(commonQuery(tClass));
     }
 
+    public <T> List<T> all(Class<T> tClass) {
+        return allTypedQuery(tClass).getResultList();
+    }
 
     @SuppressWarnings("unchecked")
     public <T> List<T> allProjection(Class tClass, String name) {
@@ -192,6 +195,7 @@ public class CommonEntityManager {
         entityManager.flush();
     }
 
+    @Transactional
     public <T> void delete(Class<T> aClass, int id) {
         T obj = findById(aClass, id);
         entityManager.remove(obj);
