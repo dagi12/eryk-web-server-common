@@ -19,6 +19,9 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.SingularAttribute;
 import java.util.List;
 
+import static pl.edu.amu.wmi.db.CommonSpecifications.MAX_AUTOCOMPLETE_ROWS;
+import static pl.edu.amu.wmi.db.CommonSpecifications.findByAutoCompleteValue;
+
 /**
  * Stworzone przez Eryk Mariankowski dnia 10.02.18.
  */
@@ -27,9 +30,13 @@ public class CommonEntityManager {
 
     private final EntityManager entityManager;
 
+    private final GenericSpecificationExecutor specificationExecutor;
+
     @Autowired
-    public CommonEntityManager(EntityManager entityManager) {
+    public CommonEntityManager(EntityManager entityManager,
+                               GenericSpecificationExecutor specificationExecutor) {
         this.entityManager = entityManager;
+        this.specificationExecutor = specificationExecutor;
     }
 
     @SuppressWarnings("unchecked")
@@ -202,6 +209,13 @@ public class CommonEntityManager {
     public <T> void delete(Class<T> aClass, int id) {
         T obj = findById(aClass, id);
         entityManager.remove(obj);
+    }
+
+    public <T> List<T> findAutoCompleteValue(Class<T> tClass, String columnName, String text) {
+        return specificationExecutor
+                .findAllQuery(tClass, findByAutoCompleteValue(columnName, text))
+                .setMaxResults(MAX_AUTOCOMPLETE_ROWS)
+                .getResultList();
     }
 
 }
