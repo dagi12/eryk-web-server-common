@@ -34,7 +34,7 @@ public final class ResponseUtil {
         return t ? ResponseEntity.ok(new GeneralResponse()) : ResponseEntity.badRequest().build();
     }
 
-    public static ResponseEntity responseSupplier(Supplier<String> supplier) {
+    public static ResponseEntity<String> responseSupplier(Supplier<String> supplier) {
         String msg = supplier.get();
         return msg == null ? ResponseEntity.ok().build() : ResponseEntity.badRequest().body(msg);
     }
