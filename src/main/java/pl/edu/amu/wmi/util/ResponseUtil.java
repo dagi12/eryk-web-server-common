@@ -41,6 +41,8 @@ public final class ResponseUtil {
 
     public static ResponseEntity<GeneralResponse> responseGeneral(Supplier<String> supplier) {
         String msg = supplier.get();
-        return msg == null ? ResponseEntity.ok(new GeneralResponse()) : ResponseEntity.badRequest().body(new GeneralResponse(msg));
+        return msg == null ?
+                ResponseEntity.ok(new GeneralResponse()) :
+                ResponseEntity.badRequest().body(new GeneralResponse(msg));
     }
 }
