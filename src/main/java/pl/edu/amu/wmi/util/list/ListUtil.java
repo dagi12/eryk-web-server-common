@@ -20,10 +20,13 @@ public final class ListUtil {
     }
 
     public static <T, S, U> Map<T, U> mapMapValues(Map<T, S> inputMap, Function<S, U> mapper) {
-        return inputMap
-            .entrySet()
-            .stream()
-            .collect(toMap(Map.Entry::getKey, e -> mapper.apply(e.getValue())));
+        if (inputMap != null) {
+            return inputMap
+                    .entrySet()
+                    .stream()
+                    .collect(toMap(Map.Entry::getKey, e -> mapper.apply(e.getValue())));
+        }
+        return null;
     }
 
     public static <T, R> boolean equalByProperty(List<T> a, List<T> b, Function<T, R> mapper) {
