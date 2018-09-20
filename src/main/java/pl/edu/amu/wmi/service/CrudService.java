@@ -28,6 +28,9 @@ public interface CrudService<T> {
 
     default void delete(int id) {
         throw new InvalidDataAccessApiUsageException("Make sure class has audit annotation");
-//        getCommonEntityManager().delete(gettClass(), id);
+    }
+
+    default String verify(T t) {
+        return null;
     }
 }

@@ -1,9 +1,8 @@
 package pl.edu.amu.wmi.controller;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pl.edu.amu.wmi.model.GeneralResponse;
 import pl.edu.amu.wmi.service.CrudService;
 
 /**
@@ -13,17 +12,22 @@ public interface CrudController<T> {
 
     CrudService<T> getCrudService();
 
-    @RequestMapping(method = RequestMethod.POST)
-    default T create(@RequestBody T t) {
-        return getCrudService().create(t);
+    @PostMapping
+    default ResponseEntity<GeneralResponse<T>> create(@RequestBody T item) {
+        CrudService<T> crudService = getCrudService();
+        String result = crudService.verify(item);
+        if (result != null) {
+            return ResponseEntity.badRequest().body(new GeneralResponse<>(result));
+        }
+        return ResponseEntity.ok(new GeneralResponse<>(crudService.create(item)));
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @PutMapping(value = "/{id}")
     default T update(@PathVariable int id, @RequestBody T t) {
         return getCrudService().update(id, t);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/{id}")
     default void delete(@PathVariable int id) {
         getCrudService().delete(id);
     }
