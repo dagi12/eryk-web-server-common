@@ -79,6 +79,16 @@ public final class ObjectUtil {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T, S> Class<T> getGenericType(Object o, Class<S> tClass) {
+        Class<?>[] classes = GenericTypeResolver.resolveTypeArguments(o.getClass(), tClass);
+        // should stay that, suppress sonar
+        if (classes != null) {
+            return (Class<T>) Arrays.asList(classes).get(0);
+        }
+        return null;
+    }
+
     public static boolean notNull(Object... objects) {
         for (Object object : objects) {
             if (object == null) {
@@ -88,4 +98,24 @@ public final class ObjectUtil {
         return true;
     }
 
+    public static boolean verifyNotEquals(Object... objects) {
+        if (objects.length % 2 == 1) {
+            return true;
+        }
+        for (int i = 1; i < objects.length; i += 2) {
+            if (objects[i] == null || objects[i - 1] == null || !objects[i].equals(objects[i - 1])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean containsTrue(boolean... bools) {
+        for (boolean b : bools) {
+            if (!b) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

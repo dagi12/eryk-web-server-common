@@ -2,6 +2,7 @@ package pl.edu.amu.wmi.service;
 
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import pl.edu.amu.wmi.db.CommonEntityManager;
+import pl.edu.amu.wmi.util.ObjectUtil;
 
 /**
  * Stworzone przez Eryk Mariankowski dnia 18.06.18.
@@ -10,7 +11,9 @@ public interface CrudService<T> {
 
     CommonEntityManager getCommonEntityManager();
 
-    Class<T> gettClass();
+    default Class<T> gettClass() {
+        return ObjectUtil.getGenericType(this, CrudService.class);
+    }
 
     default T create(T item) {
         setDefaultValues(item);
