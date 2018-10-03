@@ -2,7 +2,6 @@ package pl.edu.amu.wmi.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.core.GenericTypeResolver;
-import org.springframework.lang.NonNull;
 import pl.edu.amu.wmi.model.MyRuntimeException;
 
 import javax.persistence.Transient;
@@ -36,7 +35,6 @@ public final class ObjectUtil {
     }
 
 
-    @NonNull
     public static Class<?> getFieldType(Class<?> clazz, String property) {
         Class<?> currentClass = clazz;
         do {
