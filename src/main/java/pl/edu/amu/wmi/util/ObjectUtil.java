@@ -26,12 +26,12 @@ public final class ObjectUtil {
         do {
             for (Field field : currentClass.getDeclaredFields()) {
                 if (field.getName().equals(property)) {
-                    return true;
+                    return false;
                 }
             }
             currentClass = currentClass.getSuperclass();
         } while (currentClass != null);
-        return false;
+        return true;
     }
 
 
