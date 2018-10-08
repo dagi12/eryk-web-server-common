@@ -12,6 +12,7 @@ git config --global core.autocrlf input
 - remember to wrap postgres do blocks with `begin` and `end`
 - you don't need setters on model objects jackson sets value by reflection
 - always sepcify method of `@RequestMapping` otherwise cors options request will invoke rest method twice
+- use plural names for endpoint urls
 
 ## Font
 DejaVu Sans Mono 14 (or 15 on small dekstops)
