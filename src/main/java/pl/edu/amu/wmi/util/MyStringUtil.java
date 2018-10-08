@@ -53,7 +53,7 @@ public class MyStringUtil {
     }
 
     public static boolean isNotWhitespace(String s) {
-        return !((s == null) || "".equals(s)) && s.trim().length() > 0;
+        return !(s == null || "".equals(s)) && s.trim().length() > 0;
     }
 
     public static String firstAndSecondName(String firstName, String secondName) {

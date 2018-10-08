@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
  * Stworzone przez Eryk Mariankowski dnia 19.04.18.
@@ -37,6 +38,15 @@ public class ListUtil {
         arrayList.add(t);
         T[] newArr = (T[]) Array.newInstance(t.getClass(), arr.length + 1);
         return arrayList.toArray(arrayList.toArray(newArr));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(List<T> list, Class<T> tClass) {
+        if (isEmpty(list)) {
+            return (T[]) Array.newInstance(tClass, 0);
+        }
+        T[] instance = (T[]) Array.newInstance(tClass, list.size());
+        return list.toArray(instance);
     }
 
 
