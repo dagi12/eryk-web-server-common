@@ -17,6 +17,10 @@ git config --global core.autocrlf input
 ## Font
 DejaVu Sans Mono 14 (or 15 on small dekstops)
 
+## IntelliJ update will fix
+- GetMapping verificaition
+- Repository grouping
+
 ## Modyfikacja bibliotek (beanów)
 1. Moduł z env build arg 
 2. Klasa abstrakcyjna w common i implementacja serwisu - jeśli różnie konfigurowane w różnych aplikacjach

@@ -18,6 +18,10 @@ public final class ResponseUtil {
         return b ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
+    public static <T, S extends GeneralResponse<T>> ResponseEntity<S> response(S t) {
+        return t.isDone() ? ResponseEntity.ok(t) : ResponseEntity.badRequest().body(t);
+    }
+
     public static <T> ResponseEntity<T> response(T t) {
         return t != null ? ResponseEntity.ok(t) : ResponseEntity.badRequest().build();
     }
