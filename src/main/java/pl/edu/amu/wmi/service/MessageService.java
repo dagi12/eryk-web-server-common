@@ -33,7 +33,10 @@ public class MessageService {
         bundle = ResourceBundle.getBundle("messages", new UTF8Control());
     }
 
-    private String translate(String key) {
+    public String translate(String key) {
+        if (key == null) {
+            return null;
+        }
         try {
             String string = bundle.getString(key);
             return new String(string.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
@@ -43,7 +46,7 @@ public class MessageService {
         return key;
     }
 
-    public String getString(String key) {
+    public String getSqlString(String key) {
         if (key == null) {
             return null;
         }
