@@ -1,8 +1,10 @@
 package pl.edu.amu.wmi.util;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import pl.edu.amu.wmi.model.GeneralResponse;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 
@@ -34,6 +36,12 @@ public final class ResponseUtil {
         return t != null ? ResponseEntity.ok(t) : ResponseEntity.noContent().build();
     }
 
+    public static <T> ResponseEntity<GeneralResponse<List<T>>> responseGeneral(List<T> t) {
+        return CollectionUtils.isEmpty(t) ?
+                ResponseEntity.noContent().build() :
+                ResponseEntity.ok(new GeneralResponse<>(t));
+    }
+
     public static ResponseEntity<GeneralResponse> responseGeneral(boolean t) {
         return t ? ResponseEntity.ok(new GeneralResponse()) : ResponseEntity.badRequest().build();
     }
@@ -43,10 +51,10 @@ public final class ResponseUtil {
         return msg == null ? ResponseEntity.ok().build() : ResponseEntity.badRequest().body(msg);
     }
 
-    public static ResponseEntity<GeneralResponse> responseGeneral(Supplier<String> supplier) {
+    public static <T> ResponseEntity<GeneralResponse<T>> responseGeneral(Supplier<String> supplier) {
         String msg = supplier.get();
         return msg == null ?
-                ResponseEntity.ok(new GeneralResponse()) :
-                ResponseEntity.badRequest().body(new GeneralResponse(msg));
+                ResponseEntity.ok(new GeneralResponse<>()) :
+                ResponseEntity.badRequest().body(new GeneralResponse<>(msg));
     }
 }
