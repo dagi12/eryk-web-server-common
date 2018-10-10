@@ -70,6 +70,14 @@ public class CommonEntityManager {
         return procedureQueryInternal(query, parameters);
     }
 
+    /**
+     * This method is used for procedure with single output parameter return type
+     *
+     * @param procedureName in sql
+     * @param parameters    all parameters to procedure in order
+     * @param <T>           type of last output parameter
+     * @return single primitive output
+     */
     @SuppressWarnings("unchecked")
     public <T> T procedureResult(String procedureName, Object... parameters) {
         StoredProcedureQuery query = procedureQuery(procedureName, parameters);
