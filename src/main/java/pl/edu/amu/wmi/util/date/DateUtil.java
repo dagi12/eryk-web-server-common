@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -174,6 +175,10 @@ public class DateUtil {
             LOGGER.error("Cannot parse", e);
         }
         return null;
+    }
+
+    public static String stringFromDate(Date date) {
+        return new SimpleDateFormat("yyyy-mm-dd HH:MM:SS").format(date);
     }
 
     public static long benchmark(String context, long timestamp) {
