@@ -1,5 +1,6 @@
 package pl.edu.amu.wmi.db;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -31,8 +32,28 @@ public class GenericSpecificationExecutor {
                 .createQuery(query.where(spec.toPredicate(root, query, cb)));
     }
 
+    public <T> T findOne(Class<T> tClass, Specification<T> spec) {
+        return findAllQuery(tClass, spec).getSingleResult();
+    }
+
     public <T> List<T> findAll(Class<T> tClass, Specification<T> spec) {
         return findAllQuery(tClass, spec).getResultList();
     }
 
+    public <T> List<T> findAll(Class<T> tClass, Specification<T> spec, Pageable pageable) {
+        return findAllQuery(tClass, spec)
+                .setMaxResults(pageable.getPageSize())
+                .setFirstResult(Math.toIntExact(pageable.getOffset()))
+                .getResultList();
+    }
+
+    public <T> Long count(Class<T> tClass, Specification<T> spec) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<T> root = query.from(tClass);
+        query.select(cb.count(root));
+        return entityManager
+                .createQuery(query.where(spec.toPredicate(root, query, cb)))
+                .getSingleResult();
+    }
 }
