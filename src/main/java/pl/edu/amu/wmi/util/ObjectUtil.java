@@ -1,10 +1,13 @@
 package pl.edu.amu.wmi.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
 import pl.edu.amu.wmi.model.MyRuntimeException;
 
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -116,4 +119,29 @@ public final class ObjectUtil {
         }
         return false;
     }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ObjectUtil.class);
+
+    public static <T, S> void setFieldByReflection(@NotNull String fieldName, @NotNull T obj, S value) {
+        Field field;
+        try {
+            field = obj.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(obj, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            LOGGER.error("Field not found", e);
+        }
+    }
+
+    public static <T, S> void setStaticFieldByReflection(@NotNull String fieldName, @NotNull Class<T> tClass, S value) {
+        Field field;
+        try {
+            field = tClass.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(null, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            LOGGER.error("Field not found", e);
+        }
+    }
+
 }
