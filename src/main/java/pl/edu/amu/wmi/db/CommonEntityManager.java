@@ -9,10 +9,7 @@ import pl.edu.amu.wmi.model.MyRuntimeException;
 import pl.edu.amu.wmi.util.pair.Pair;
 import pl.edu.amu.wmi.util.pair.PairUtil;
 
-import javax.persistence.EntityManager;
-import javax.persistence.ParameterMode;
-import javax.persistence.StoredProcedureQuery;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -52,6 +49,24 @@ public class CommonEntityManager {
         }
         return (T) list.get(0);
     }
+
+    @SuppressWarnings("squid:S2077")
+    public void voidProcedure(String procedureName, Object... parameters) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < parameters.length; i++) {
+            builder.append("?");
+            if (i != parameters.length - 1) {
+                builder.append(",");
+            }
+        }
+        String sqlString = "SELECT 1 FROM " + procedureName + "(" + builder.toString() + ")";
+        Query query = entityManager.createNativeQuery(sqlString);
+        for (int i = 0; i < parameters.length; ++i) {
+            query.setParameter(i + 1, parameters[i]);
+        }
+        query.getSingleResult();
+    }
+
 
     private StoredProcedureQuery procedureQueryInternal(StoredProcedureQuery query, Object[] parameters) {
         for (int i = 0; i < parameters.length; ++i) {
@@ -161,6 +176,7 @@ public class CommonEntityManager {
         return entityManager.find(tClass, id);
     }
 
+    @Transactional
     public <T> void update(T entity) {
         entityManager.merge(entity);
     }
@@ -171,11 +187,6 @@ public class CommonEntityManager {
 
     @Transactional
     public <T> void save(T object) {
-        entityManager.persist(object);
-    }
-
-    @Transactional
-    public <T> void saveWithinTransaction(T object) {
         entityManager.persist(object);
     }
 
