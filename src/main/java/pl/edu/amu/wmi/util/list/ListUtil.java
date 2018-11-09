@@ -1,10 +1,7 @@
 package pl.edu.amu.wmi.util.list;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,7 +29,7 @@ public final class ListUtil {
 
     public static <T, R> boolean equalByProperty(List<T> a, List<T> b, Function<T, R> mapper) {
         return a.stream().map(mapper).collect(Collectors.toList())
-            .equals(b.stream().map(mapper).collect(Collectors.toList()));
+                .equals(b.stream().map(mapper).collect(Collectors.toList()));
     }
 
     @SuppressWarnings("unchecked")
@@ -52,5 +49,16 @@ public final class ListUtil {
         return list.toArray(instance);
     }
 
+    public static <T> boolean findDuplicates(List<T> listContainingDuplicates) {
+        final Set<T> setToReturn = new HashSet<>();
+        final Set<T> set1 = new HashSet<>();
+
+        for (T yourInt : listContainingDuplicates) {
+            if (!set1.add(yourInt)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
