@@ -1,5 +1,6 @@
 package pl.edu.amu.wmi.util.list;
 
+import javax.validation.constraints.NotEmpty;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Function;
@@ -49,12 +50,18 @@ public final class ListUtil {
         return list.toArray(instance);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(@NotEmpty List<T> list) {
+        Class<?> tClass = list.get(0).getClass();
+        T[] instance = (T[]) Array.newInstance(tClass, list.size());
+        return list.toArray(instance);
+    }
+
     public static <T> boolean findDuplicates(List<T> listContainingDuplicates) {
-        final Set<T> setToReturn = new HashSet<>();
-        final Set<T> set1 = new HashSet<>();
+        final Set<T> set = new HashSet<>();
 
         for (T yourInt : listContainingDuplicates) {
-            if (!set1.add(yourInt)) {
+            if (!set.add(yourInt)) {
                 return true;
             }
         }

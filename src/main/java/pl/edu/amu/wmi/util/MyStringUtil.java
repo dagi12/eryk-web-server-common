@@ -8,6 +8,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 
 /**
  * Stworzone przez Eryk Mariankowski dnia 21.07.2017.
@@ -57,6 +59,9 @@ public class MyStringUtil {
     }
 
     public static String firstAndSecondName(String firstName, String secondName) {
+        if (isEmpty(firstName) && isEmpty(secondName)) {
+            return null;
+        }
         return firstName + " " + secondName;
     }
 
