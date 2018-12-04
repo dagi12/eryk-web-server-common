@@ -37,7 +37,7 @@ public final class ResponseUtil {
     }
 
     public static <T, S extends GeneralResponse<T>> ResponseEntity<S> responseGeneral(S t) {
-        return t.isDone() ? ResponseEntity.ok(t) : ResponseEntity.badRequest().body(t);
+        return t.isSuccess() ? ResponseEntity.ok(t) : ResponseEntity.badRequest().body(t);
     }
 
 
