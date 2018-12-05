@@ -44,6 +44,12 @@ public class DateUtil {
         return calendar.getTime();
     }
 
+    public static Timestamp getEndOfTheDay(Date inputDate) {
+        Date date = addDays(inputDate, 1);
+        Date truncate = DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
+        return new Timestamp(truncate.getTime());
+    }
+
     public static int dayDifference(Timestamp dateFrom, Timestamp dateTo) {
         long diff = dateTo.getTime() - dateFrom.getTime();
         return (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
