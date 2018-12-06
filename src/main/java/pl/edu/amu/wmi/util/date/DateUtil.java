@@ -37,9 +37,9 @@ public class DateUtil {
         return calendar.getTime();
     }
 
-    public static Date getMinuteAgo() {
+    public static Date getMinuteAgo(Date date) {
         final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
+        calendar.setTime(date);
         calendar.add(Calendar.MINUTE, -1);
         return calendar.getTime();
     }
@@ -171,7 +171,7 @@ public class DateUtil {
     }
 
     public static Timestamp truncateSeconds(Timestamp timestamp) {
-        return new Timestamp(DateUtils.truncate(new Date(timestamp.getTime()), Calendar.MINUTE).getTime());
+        return new Timestamp(DateUtils.truncate(timestamp.getTime(), Calendar.MINUTE).getTime());
     }
 
     public static Timestamp timestampFromString(String source) {
