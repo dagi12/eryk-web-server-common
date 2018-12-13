@@ -1,6 +1,9 @@
 package pl.edu.amu.wmi.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.GenericTypeResolver;
 import pl.edu.amu.wmi.model.MyRuntimeException;
 
@@ -9,8 +12,12 @@ import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
+
+import static org.apache.commons.lang3.ArrayUtils.addAll;
 
 public final class ObjectUtil {
 
@@ -123,6 +130,26 @@ public final class ObjectUtil {
         Field field = tClass.getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(null, value);
+    }
+
+    private static <T> String[] getNullPropertyNames(T source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for (java.beans.PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) {
+                emptyNames.add(pd.getName());
+            }
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
+    }
+
+    public static <T, S> void copyProperties(T src, S target, String... ignoreProperties) {
+        String[] nullPropertyNames = getNullPropertyNames(src);
+        BeanUtils.copyProperties(src, target, addAll(nullPropertyNames, ignoreProperties));
     }
 
 }
