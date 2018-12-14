@@ -1,6 +1,7 @@
 package pl.edu.amu.wmi.util.list;
 
-import javax.validation.constraints.NotEmpty;
+import pl.edu.amu.wmi.model.MyRuntimeException;
+
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Function;
@@ -51,7 +52,10 @@ public final class ListUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T[] toArray(@NotEmpty List<T> list) {
+    public static <T> T[] toArray(List<T> list) {
+        if (isEmpty(list)) {
+            throw new MyRuntimeException("List is empty");
+        }
         Class<?> tClass = list.get(0).getClass();
         T[] instance = (T[]) Array.newInstance(tClass, list.size());
         return list.toArray(instance);
