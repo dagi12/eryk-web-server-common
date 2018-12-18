@@ -148,7 +148,7 @@ public class CommonEntityManager {
                 .getResultList();
     }
 
-    public <T, S> List<T> allOrder(Class<T> tClass, SingularAttribute<T, S> col, boolean asc) {
+    public <T, S> List<T> allOrder(Class<T> tClass, SingularAttribute<? super T, S> col, boolean asc) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> query = builder.createQuery(tClass);
         Root<T> root = query.from(tClass);

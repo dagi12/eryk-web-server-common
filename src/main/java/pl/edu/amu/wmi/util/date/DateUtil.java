@@ -171,7 +171,7 @@ public class DateUtil {
     }
 
     public static Timestamp truncateSeconds(Timestamp timestamp) {
-        return new Timestamp(DateUtils.truncate(timestamp.getTime(), Calendar.MINUTE).getTime());
+        return new Timestamp(DateUtils.truncate(timestamp, Calendar.MINUTE).getTime());
     }
 
     public static Timestamp timestampFromString(String source) {
