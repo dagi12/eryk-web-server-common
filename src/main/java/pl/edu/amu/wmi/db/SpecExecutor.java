@@ -15,11 +15,11 @@ import java.util.List;
  * Created by erykmariankowski on 11.09.2018.
  */
 @Component
-public class GenericSpecificationExecutor {
+public class SpecExecutor {
 
     private final EntityManager entityManager;
 
-    public GenericSpecificationExecutor(EntityManager entityManager) {
+    public SpecExecutor(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 

@@ -1,6 +1,7 @@
 package pl.edu.amu.wmi.db;
 
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -15,6 +16,7 @@ public final class CommonSpecifications {
 
     public static final String QUERY_PREFIX = "SELECT * FROM ";
     public static final int MAX_AUTOCOMPLETE_ROWS = 15;
+    public static final PageRequest FIRST_RESULT = PageRequest.of(0, 1);
 
     private CommonSpecifications() {
 
@@ -58,6 +60,6 @@ public final class CommonSpecifications {
     }
 
     public static String wrapLike(String stmt) {
-        return "%" + stmt + "%";
+        return "%" + stmt.toLowerCase() + "%";
     }
 }

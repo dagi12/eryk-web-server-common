@@ -27,11 +27,11 @@ public class CommonEntityManager {
 
     private final EntityManager entityManager;
 
-    private final GenericSpecificationExecutor specificationExecutor;
+    private final SpecExecutor specificationExecutor;
 
     @Autowired
     public CommonEntityManager(EntityManager entityManager,
-                               GenericSpecificationExecutor specificationExecutor) {
+                               SpecExecutor specificationExecutor) {
         this.entityManager = entityManager;
         this.specificationExecutor = specificationExecutor;
     }
