@@ -9,31 +9,27 @@ import pl.edu.amu.wmi.model.MyRuntimeException;
 import pl.edu.amu.wmi.util.pair.Pair;
 import pl.edu.amu.wmi.util.pair.PairUtil;
 
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.SingularAttribute;
+import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
+import javax.persistence.Query;
+import javax.persistence.StoredProcedureQuery;
 import java.util.List;
-
-import static pl.edu.amu.wmi.db.CommonSpecifications.MAX_AUTOCOMPLETE_ROWS;
-import static pl.edu.amu.wmi.db.CommonSpecifications.findByAutoCompleteValue;
 
 /**
  * Stworzone przez Eryk Mariankowski dnia 10.02.18.
  */
 @Service
-public class CommonEntityManager {
+public class MyEntityManager {
 
     private final EntityManager entityManager;
 
-    private final SpecExecutor specificationExecutor;
+    private final SpecExecutor specExecutor;
 
     @Autowired
-    public CommonEntityManager(EntityManager entityManager,
-                               SpecExecutor specificationExecutor) {
+    public MyEntityManager(EntityManager entityManager,
+                           SpecExecutor specExecutor) {
         this.entityManager = entityManager;
-        this.specificationExecutor = specificationExecutor;
+        this.specExecutor = specExecutor;
     }
 
     @SuppressWarnings("unchecked")
@@ -76,10 +72,6 @@ public class CommonEntityManager {
         return query;
     }
 
-    public void detach(Object object) {
-        entityManager.detach(object);
-    }
-
     public StoredProcedureQuery procedureQuery(String procedureName, Object... parameters) {
         StoredProcedureQuery query = entityManager.createNamedStoredProcedureQuery(procedureName);
         return procedureQueryInternal(query, parameters);
@@ -118,52 +110,17 @@ public class CommonEntityManager {
         return procedureQueryInternal(query, parameters).getResultList();
     }
 
-    private <T> CriteriaQuery<T> commonQuery(Class<T> tClass) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> query = builder.createQuery(tClass);
-        Root<T> variableRoot = query.from(tClass);
-        return query.select(variableRoot);
-    }
-
-    private <T> CriteriaQuery commonQueryProjection(Class<T> inputClass, String name) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> query = builder.createQuery(inputClass);
-        Root<T> variableRoot = query.from(inputClass);
-        return query.select(variableRoot.get(name));
-    }
-
-    public <T> TypedQuery<T> allTypedQuery(Class<T> tClass) {
-        return entityManager
-                .createQuery(commonQuery(tClass));
-    }
 
     public <T> List<T> all(Class<T> tClass) {
-        return allTypedQuery(tClass).getResultList();
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> List<T> allProjection(Class tClass, String name) {
         return entityManager
-                .createQuery(commonQueryProjection(tClass, name))
+                .createQuery(specExecutor.commonQuery(tClass))
                 .getResultList();
-    }
-
-    public <T, S> List<T> allOrder(Class<T> tClass, SingularAttribute<? super T, S> col, boolean asc) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> query = builder.createQuery(tClass);
-        Root<T> root = query.from(tClass);
-        CriteriaQuery<T> ordered = query
-                .orderBy(asc ?
-                        builder.asc(root.get(col)) :
-                        builder.desc(root.get(col)));
-        return entityManager
-                .createQuery(ordered.select(root))
-                .getResultList();
-
     }
 
     public <T> T unique(Class<T> tClass) {
-        return entityManager.createQuery(commonQuery(tClass)).getSingleResult();
+        return entityManager
+                .createQuery(specExecutor.commonQuery(tClass))
+                .getSingleResult();
     }
 
     @Transactional
@@ -171,49 +128,8 @@ public class CommonEntityManager {
         return entityManager.find(tClass, id);
     }
 
-    @Transactional
-    public <T> T getByString(Class<T> tClass, String id) {
-        return entityManager.find(tClass, id);
-    }
-
-    @Transactional
-    public <T> void update(T entity) {
-        entityManager.merge(entity);
-    }
-
     public void doWork(final Work work) {
         entityManager.unwrap(Session.class).doWork(work);
-    }
-
-    @Transactional
-    public <T> void save(T object) {
-        entityManager.persist(object);
-    }
-
-    public <T> Integer count(Class<T> tClass) {
-        CriteriaBuilder qb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = qb.createQuery(Long.class);
-        return entityManager
-                .createQuery(cq.select(qb.count(cq.from(tClass))))
-                .getSingleResult()
-                .intValue();
-    }
-
-
-    public <T> T last(Class<T> tClass, String col) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> query = builder.createQuery(tClass);
-        Root<T> variableRoot = query.from(tClass);
-        query.orderBy(builder.desc(variableRoot.get(col)));
-        return entityManager
-                .createQuery(query.select(variableRoot))
-                .setMaxResults(1)
-                .getSingleResult();
-    }
-
-
-    public <T> void delete(T item) {
-        entityManager.remove(item);
     }
 
     @Transactional
@@ -230,11 +146,14 @@ public class CommonEntityManager {
         entityManager.remove(obj);
     }
 
-    public <T> List<T> findAutoCompleteValue(Class<T> tClass, String columnName, String text) {
-        return specificationExecutor
-                .findAllQuery(tClass, findByAutoCompleteValue(columnName, text))
-                .setMaxResults(MAX_AUTOCOMPLETE_ROWS)
-                .getResultList();
+
+    @Transactional
+    public <T> void update(T entity) {
+        entityManager.merge(entity);
     }
 
+    @Transactional
+    public <T> void save(T object) {
+        entityManager.persist(object);
+    }
 }

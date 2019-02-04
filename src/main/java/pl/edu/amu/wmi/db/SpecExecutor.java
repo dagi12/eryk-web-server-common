@@ -23,6 +23,13 @@ public class SpecExecutor {
         this.entityManager = entityManager;
     }
 
+    <T> CriteriaQuery<T> commonQuery(Class<T> tClass) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> query = cb.createQuery(tClass);
+        Root<T> variableRoot = query.from(tClass);
+        return query.select(variableRoot);
+    }
+
     public <T> TypedQuery<T> findAllQuery(Class<T> tClass, Specification<T> spec) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> query = cb.createQuery(tClass);
@@ -56,4 +63,5 @@ public class SpecExecutor {
                 .createQuery(query.where(spec.toPredicate(root, query, cb)))
                 .getSingleResult();
     }
+
 }
