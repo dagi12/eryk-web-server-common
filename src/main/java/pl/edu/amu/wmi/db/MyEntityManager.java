@@ -1,7 +1,5 @@
 package pl.edu.amu.wmi.db;
 
-import org.hibernate.Session;
-import org.hibernate.jdbc.Work;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,10 +130,6 @@ public class MyEntityManager {
     @Transactional
     public <T, S extends Serializable> T find(Class<T> tClass, S id) {
         return entityManager.find(tClass, id);
-    }
-
-    public void doWork(final Work work) {
-        entityManager.unwrap(Session.class).doWork(work);
     }
 
     @Transactional
