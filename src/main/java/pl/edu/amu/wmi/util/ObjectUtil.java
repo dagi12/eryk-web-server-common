@@ -43,8 +43,8 @@ public final class ObjectUtil {
     }
 
 
-    public static Class<?> getFieldType(Class<?> clazz, String property) {
-        Class<?> currentClass = clazz;
+    public static Class<?> getFieldType2(Class<?> aClass, String property) {
+        Class<?> currentClass = aClass;
         do {
             for (Field field : currentClass.getDeclaredFields()) {
                 if (field.getName().equals(property)) {
@@ -53,6 +53,14 @@ public final class ObjectUtil {
             }
             currentClass = currentClass.getSuperclass();
         } while (currentClass != null);
+        return null;
+    }
+
+    public static Class<?> getFieldType(Class<?> aClass, String property) {
+        Class<?> clazz = getFieldType2(aClass, property);
+        if (clazz != null) {
+            return clazz;
+        }
         throw new MyRuntimeException("Wrong property name");
     }
 
