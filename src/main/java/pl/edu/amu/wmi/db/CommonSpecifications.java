@@ -47,6 +47,10 @@ public final class CommonSpecifications {
         return (root, query, cb) -> ilike(cb, root.get(columnName), wrapLike(value));
     }
 
+    public static <T> Specification<T> findByAutoCompleteValue(SingularAttribute<T, String> attribute, String value) {
+        return (root, query, cb) -> cb.like(cb.lower(root.get(attribute)), wrapLike(value));
+    }
+
     public static <T, S> Specification<T> existsByColumnValue(SingularAttribute<T, S> attribute, S value) {
         return (root, query, cb) -> cb.equal(root.get(attribute), value);
     }
