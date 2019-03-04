@@ -17,7 +17,7 @@ public interface CrudService<T> {
 
     default T create(T item) {
         setDefaultValues(item);
-        getEntityManager().save(item);
+        getEntityManager().persist(item);
         return item;
     }
 
@@ -25,7 +25,7 @@ public interface CrudService<T> {
     }
 
     default T update(int id, T t) {
-        getEntityManager().update(t);
+        getEntityManager().merge(t);
         return t;
     }
 
@@ -34,6 +34,10 @@ public interface CrudService<T> {
     }
 
     default String verify(T t) {
+        return null;
+    }
+
+    default String verifyUpdate(T t) {
         return null;
     }
 }

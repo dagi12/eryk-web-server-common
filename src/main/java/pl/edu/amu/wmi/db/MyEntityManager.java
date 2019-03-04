@@ -124,7 +124,7 @@ public class MyEntityManager {
     }
 
     @Transactional
-    public <T, S> T findById(Class<T> tClass, S id) {
+    public <T, S> T find(Class<T> tClass, S id) {
         return entityManager.find(tClass, id);
     }
 
@@ -141,19 +141,19 @@ public class MyEntityManager {
     }
 
     @Transactional
-    public <T> void delete(Class<T> aClass, int id) {
-        T obj = findById(aClass, id);
+    public <T, S> void remove(Class<T> aClass, S id) {
+        T obj = find(aClass, id);
         entityManager.remove(obj);
     }
 
 
     @Transactional
-    public <T> void update(T entity) {
+    public <T> void merge(T entity) {
         entityManager.merge(entity);
     }
 
     @Transactional
-    public <T> void save(T object) {
+    public <T> void persist(T object) {
         entityManager.persist(object);
     }
 }
