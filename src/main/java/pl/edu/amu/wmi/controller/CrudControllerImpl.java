@@ -4,6 +4,9 @@ import org.springframework.web.bind.annotation.*;
 import pl.edu.amu.wmi.exception.VerifyException;
 import pl.edu.amu.wmi.service.CrudService;
 
+import javax.validation.Valid;
+import java.util.List;
+
 /**
  * Stworzone przez Eryk Mariankowski dnia 18.06.18.
  */
@@ -22,7 +25,7 @@ public abstract class CrudControllerImpl<T> implements CrudController<T> {
 
     @Override
     @PostMapping
-    public T create(@RequestBody T item) {
+    public T create(@RequestBody @Valid T item) {
         String result = crudService.verify(item);
         if (result != null) {
             throw new VerifyException(result);
@@ -32,7 +35,7 @@ public abstract class CrudControllerImpl<T> implements CrudController<T> {
 
     @Override
     @PutMapping(value = "/{id}")
-    public T update(@PathVariable int id, @RequestBody T t) {
+    public T update(@PathVariable int id, @RequestBody @Valid T t) {
         String result = crudService.verifyUpdate(t);
         if (result != null) {
             throw new VerifyException(result);
@@ -46,5 +49,9 @@ public abstract class CrudControllerImpl<T> implements CrudController<T> {
         crudService.delete(id);
     }
 
+    @GetMapping
+    public List<T> get() {
+        return crudService.get();
+    }
 
 }

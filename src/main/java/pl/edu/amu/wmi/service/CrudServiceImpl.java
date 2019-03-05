@@ -7,7 +7,7 @@ import pl.edu.amu.wmi.db.MyEntityManager;
  */
 public class CrudServiceImpl<T> implements CrudService<T> {
 
-    private final MyEntityManager myEntityManager;
+    protected final MyEntityManager myEntityManager;
 
     public CrudServiceImpl(MyEntityManager myEntityManager) {
         this.myEntityManager = myEntityManager;

@@ -4,6 +4,9 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import pl.edu.amu.wmi.db.MyEntityManager;
 import pl.edu.amu.wmi.util.ObjectUtil;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Stworzone przez Eryk Mariankowski dnia 18.06.18.
  */
@@ -40,4 +43,9 @@ public interface CrudService<T> {
     default String verifyUpdate(T t) {
         return null;
     }
+
+    default List<T> get() {
+        return Collections.emptyList();
+    }
+
 }
