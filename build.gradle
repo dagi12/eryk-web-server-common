@@ -1,22 +1,12 @@
-buildscript {
-    ext {
-        springBootVersion = '1.5.14.RELEASE'
-    }
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
+plugins {
+    id "org.springframework.boot" apply false
 }
 
-apply plugin: "io.spring.dependency-management"
+group "pl.edu.amu.wmi"
+version "0.10"
 
-
-group 'pl.edu.amu.wmi'
-version '0.10'
-
-apply plugin: 'java'
+apply plugin: "java"
+apply plugin: "java-library"
 
 sourceCompatibility = 1.8
 
@@ -25,24 +15,20 @@ repositories {
 }
 
 dependencies {
-    compile project(":eryk-web-server-model")
-    compile "org.springframework.boot:spring-boot-starter-web"
-    compile "org.springframework.boot:spring-boot-starter-data-jpa"
+    api project(":eryk-web-server-model")
+    api "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
 
     // serialization
-    compile "com.fasterxml.jackson.core:jackson-core"
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+    implementation "com.fasterxml.jackson.core:jackson-core"
+    api group: "org.apache.commons", name: "commons-lang3", version: "3.7"
 
     // utile
-    compile "com.google.guava:guava:23.0"
+    api "com.google.guava:guava:23.0"
 
     // logowanie
-    compile "org.slf4j:slf4j-api"
-    compile "ch.qos.logback:logback-core"
-    compile "ch.qos.logback:logback-classic"
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-
-dependencyManagement {
-    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
+    implementation "org.slf4j:slf4j-api"
+    implementation "ch.qos.logback:logback-core"
+    implementation "ch.qos.logback:logback-classic"
+    testImplementation group: "junit", name: "junit", version: "4.12"
 }

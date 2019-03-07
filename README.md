@@ -1,6 +1,15 @@
 # eryk-web-server-model
 Common services shared across web projects.
 
+## On spring boot update
+- compile
+- start from IntelliJ
+- start from terminal
+- run tests
+- run gradle test
+- deploy war
+- check logs and errors
+
 ## Important notes
 
 - Always wait a year after beta release of common framework to be used in the project. (spring boot, spring security)
