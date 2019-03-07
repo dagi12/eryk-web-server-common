@@ -3,6 +3,7 @@ package pl.edu.amu.wmi.util;
 import org.hibernate.internal.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.edu.amu.wmi.model.FirstLastName;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -117,4 +118,9 @@ public class MyStringUtil {
             return null;
         }
     }
+
+    public static String getFullName(FirstLastName name) {
+        return name.getImie() + " " + name.getNazwisko();
+    }
+
 }
