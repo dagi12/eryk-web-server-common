@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -124,7 +125,7 @@ public class MyEntityManager {
     }
 
     @Transactional
-    public <T, S> T find(Class<T> tClass, S id) {
+    public <T, S extends Serializable> T find(Class<T> tClass, S id) {
         return entityManager.find(tClass, id);
     }
 
@@ -141,7 +142,7 @@ public class MyEntityManager {
     }
 
     @Transactional
-    public <T, S> void remove(Class<T> aClass, S id) {
+    public <T, S extends Serializable> void remove(Class<T> aClass, S id) {
         T obj = find(aClass, id);
         entityManager.remove(obj);
     }

@@ -39,6 +39,10 @@ public class SpecExecutor {
                 .createQuery(query.where(spec.toPredicate(root, query, cb)));
     }
 
+    /**
+     * @throws javax.persistence.NoResultException        if there is no result
+     * @throws javax.persistence.NonUniqueResultException if there is more than one result
+     */
     public <T> T findOne(Class<T> tClass, Specification<T> spec) {
         return findAllQuery(tClass, spec).getSingleResult();
     }
