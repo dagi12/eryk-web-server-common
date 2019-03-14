@@ -50,22 +50,17 @@ public class DateUtil {
         return new Timestamp(truncate.getTime());
     }
 
-    public static int dayDifference(Timestamp dateFrom, Timestamp dateTo) {
-        long diff = dateTo.getTime() - dateFrom.getTime();
-        return (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-    }
-
     public static int dayDifference(Date dateFrom, Date dateTo) {
         long diff = dateTo.getTime() - dateFrom.getTime();
         return (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
 
-    public static int hourDifference(Timestamp dateFrom, Timestamp dateTo) {
+    public static int hourDifference(Date dateFrom, Date dateTo) {
         long diff = dateTo.getTime() - dateFrom.getTime();
         return (int) TimeUnit.MILLISECONDS.toHours(diff);
     }
 
-    public static int minuteDifference(Timestamp dateFrom, Timestamp dateTo) {
+    public static int minuteDifference(Date dateFrom, Date dateTo) {
         long diff = dateTo.getTime() - dateFrom.getTime();
         return (int) TimeUnit.MILLISECONDS.toMinutes(diff);
     }
