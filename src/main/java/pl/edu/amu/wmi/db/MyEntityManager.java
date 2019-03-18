@@ -33,7 +33,9 @@ public class MyEntityManager {
         this.specExecutor = specExecutor;
     }
 
+    // should be transactional for BookingControllerIT
     @SuppressWarnings("unchecked")
+    @Transactional
     public <T> List<T> executeProcedure(String procedureName, Object... parameters) {
         return procedureQuery(procedureName, parameters).getResultList();
     }
@@ -80,6 +82,7 @@ public class MyEntityManager {
 
     /**
      * This method is used for procedure with single output parameter return type
+     * Should be transactional or execution from unit tests won't work
      *
      * @param procedureName in sql
      * @param parameters    all parameters to procedure in order
@@ -87,6 +90,7 @@ public class MyEntityManager {
      * @return single primitive output
      */
     @SuppressWarnings("unchecked")
+    @Transactional
     public <T> T procedureResult(String procedureName, Object... parameters) {
         StoredProcedureQuery query = procedureQuery(procedureName, parameters);
         return (T) query.getOutputParameterValue(parameters.length + 1);

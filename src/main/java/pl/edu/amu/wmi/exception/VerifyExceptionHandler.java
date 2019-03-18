@@ -15,10 +15,9 @@ public class VerifyExceptionHandler extends ResponseEntityExceptionHandler {
 
     @SuppressWarnings("unused")
     @ExceptionHandler(VerifyException.class)
-    public final ResponseEntity<GeneralResponse> handleUserNotFoundException(VerifyException ex,
-                                                                             WebRequest request) {
+    public final ResponseEntity<GeneralResponse> handleVerifyException(VerifyException ex, WebRequest request) {
         GeneralResponse errorDetails = new GeneralResponse<>(ex.getMessage());
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
 }
