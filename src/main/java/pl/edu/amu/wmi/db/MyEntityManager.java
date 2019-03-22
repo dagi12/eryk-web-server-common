@@ -40,13 +40,14 @@ public class MyEntityManager {
         return procedureQuery(procedureName, parameters).getResultList();
     }
 
-    @SuppressWarnings("unchecked")
+    // should be transactional because call to executeProcedure (sonar)
+    @Transactional
     public <T> T executeProcedureSingle(String procedureName, Object... parameters) {
-        List list = executeProcedure(procedureName, parameters);
+        List<T> list = executeProcedure(procedureName, parameters);
         if (list.size() != 1) {
             throw new MyRuntimeException("Procedure result is not single");
         }
-        return (T) list.get(0);
+        return list.get(0);
     }
 
     @SuppressWarnings("squid:S2077")
