@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -80,6 +81,9 @@ public class FileUtil {
         return prefix + dateFileName;
     }
 
+    // it's ok, other solutions are throwing FileSystemNotFoundException
+    // on Paths.get(fileName.toURI()) in production environment (war deployment)
+    @SuppressWarnings("UnstableApiUsage")
     public static String stringFromFilename(URL fileName) {
         try {
             return Resources.toString(fileName, Charsets.UTF_8);

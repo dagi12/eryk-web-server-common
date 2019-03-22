@@ -18,6 +18,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 /**
  * Created by erykmariankowski on 08.10.2018.
  */
+// TODO remove and replace by spring message source
 @Service
 public class MessageService {
 
