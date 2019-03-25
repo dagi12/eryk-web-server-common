@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import pl.edu.amu.wmi.model.GeneralResponse;
 import pl.edu.amu.wmi.model.MyRuntimeException;
 
 import javax.annotation.PostConstruct;
@@ -45,6 +46,12 @@ public class MessageService {
             LOGGER.warn("No value for key: {}, locale: {}", key, COUNTRY_CODE, e);
         }
         return key;
+    }
+
+    public <T> GeneralResponse<T> translate(GeneralResponse<T> response) {
+        String translate = translate(response.getErrorMessage());
+        response.setErrorMessage(translate);
+        return response;
     }
 
     public String getSqlString(String key) {
