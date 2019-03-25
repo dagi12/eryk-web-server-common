@@ -1,38 +1,28 @@
 package pl.edu.amu.wmi.service;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 import pl.edu.amu.wmi.model.GeneralResponse;
 import pl.edu.amu.wmi.model.MyRuntimeException;
-
-import javax.annotation.PostConstruct;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * Created by erykmariankowski on 08.10.2018.
  */
-// TODO remove and replace by spring message source
 @Service
 public class MessageService {
 
-    private static final String COUNTRY_CODE = Locale.getDefault().getCountry();
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
-    private ResourceBundle bundle;
-    @Value("${spring.mvc.locale:pl_PL}")
-    private String locale;
+    private final MessageSourceAccessor messageSourceAccessor;
 
-    @PostConstruct
-    public void init() {
-        Locale.setDefault(LocaleUtils.toLocale(locale));
-        bundle = ResourceBundle.getBundle("messages", new UTF8Control());
+    public MessageService(MessageSource messageSource) {
+        this.messageSourceAccessor = new MessageSourceAccessor(messageSource);
     }
 
     public String translate(String key) {
@@ -40,20 +30,24 @@ public class MessageService {
             return null;
         }
         try {
-            String string = bundle.getString(key);
-            return new String(string.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-        } catch (MissingResourceException e) {
-            LOGGER.warn("No value for key: {}, locale: {}", key, COUNTRY_CODE, e);
+            return messageSourceAccessor.getMessage(key);
+        } catch (NoSuchMessageException e) {
+            LOGGER.warn("No value for key: {}, locale: {}", key, LocaleContextHolder.getLocale(), e);
         }
         return key;
     }
 
-    public <T> GeneralResponse<T> translate(GeneralResponse<T> response) {
+    public <T> void translate(GeneralResponse<T> response) {
         String translate = translate(response.getErrorMessage());
         response.setErrorMessage(translate);
-        return response;
     }
 
+    /**
+     * This method extracts error code string from sql messge and translates it
+     *
+     * @param key sql error code
+     * @return translated code
+     */
     public String getSqlString(String key) {
         if (key == null) {
             return null;
