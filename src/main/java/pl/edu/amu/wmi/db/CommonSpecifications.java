@@ -17,6 +17,8 @@ public final class CommonSpecifications {
     public static final String QUERY_PREFIX = "SELECT * FROM ";
     public static final int MAX_AUTOCOMPLETE_ROWS = 15;
     public static final PageRequest FIRST_RESULT = PageRequest.of(0, 1);
+    public static final PageRequest AUTOCOMPLETE_RESULT = PageRequest.of(0, MAX_AUTOCOMPLETE_ROWS);
+
 
     private CommonSpecifications() {
 
@@ -48,7 +50,7 @@ public final class CommonSpecifications {
     }
 
     public static <T> Specification<T> findByAutoCompleteValue(SingularAttribute<T, String> attribute, String value) {
-        return (root, query, cb) -> cb.like(cb.lower(root.get(attribute)), wrapLike(value));
+        return (root, query, cb) -> ilike(cb, root.get(attribute), wrapLike(value));
     }
 
     public static <T, S> Specification<T> existsByColumnValue(SingularAttribute<T, S> attribute, S value) {
@@ -63,7 +65,8 @@ public final class CommonSpecifications {
         return cb.like(cb.lower(path), value.toLowerCase());
     }
 
+    // don't add to lowercase
     public static String wrapLike(String stmt) {
-        return "%" + stmt.toLowerCase() + "%";
+        return "%" + stmt + "%";
     }
 }
