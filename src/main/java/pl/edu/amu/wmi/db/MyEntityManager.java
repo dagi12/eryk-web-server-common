@@ -6,9 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.edu.amu.wmi.model.MyRuntimeException;
 import pl.edu.amu.wmi.util.pair.Pair;
 import pl.edu.amu.wmi.util.pair.PairUtil;
+import pl.softra.common.db.context.initializer.DataBaseConfigHolder;
 
 import javax.persistence.EntityManager;
-import javax.persistence.ParameterMode;
 import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 import java.io.Serializable;
@@ -24,94 +24,30 @@ public class MyEntityManager {
 
     private final SpecExecutor specExecutor;
 
+    private final DataBaseConfigHolder dataBaseConfig;
+
+    private final StoredProcedureUtilService storedProcedureUtilService;
+
     @Autowired
     public MyEntityManager(EntityManager entityManager,
-                           SpecExecutor specExecutor) {
+                           SpecExecutor specExecutor, DataBaseConfigHolder dataBaseConfig, StoredProcedureUtilService storedProcedureUtilService) {
         this.entityManager = entityManager;
         this.specExecutor = specExecutor;
-    }
-
-    // should be transactional for BookingControllerIT
-    @SuppressWarnings("unchecked")
-    @Transactional
-    public <T> List<T> executeProcedure(String procedureName, Object... parameters) {
-        return procedureQuery(procedureName, parameters).getResultList();
-    }
-
-    // should be transactional because call to executeProcedure (sonar)
-    @Transactional
-    public <T> T executeProcedureSingle(String procedureName, Object... parameters) {
-        List<T> list = executeProcedure(procedureName, parameters);
-        if (list.size() != 1) {
-            throw new MyRuntimeException("Procedure result is not single");
-        }
-        return list.get(0);
-    }
-
-    @SuppressWarnings("squid:S2077")
-    public void voidProcedure(String procedureName, Object... parameters) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < parameters.length; i++) {
-            builder.append("?");
-            if (i != parameters.length - 1) {
-                builder.append(",");
-            }
-        }
-        String sqlString = "SELECT 1 FROM " + procedureName + "(" + builder.toString() + ")";
-        Query query = entityManager.createNativeQuery(sqlString);
-        for (int i = 0; i < parameters.length; ++i) {
-            query.setParameter(i + 1, parameters[i]);
-        }
-        query.getSingleResult();
-    }
-
-
-    private StoredProcedureQuery procedureQueryInternal(StoredProcedureQuery query, Object[] parameters) {
-        for (int i = 0; i < parameters.length; ++i) {
-            query.setParameter(i + 1, parameters[i]);
-        }
-        query.execute();
-        return query;
-    }
-
-    public StoredProcedureQuery procedureQuery(String procedureName, Object... parameters) {
-        StoredProcedureQuery query = entityManager.createNamedStoredProcedureQuery(procedureName);
-        return procedureQueryInternal(query, parameters);
+        this.dataBaseConfig = dataBaseConfig;
+        this.storedProcedureUtilService = storedProcedureUtilService;
     }
 
     /**
-     * This method is used for procedure with single output parameter return type
-     * Should be transactional or execution from unit tests won't work
-     *
-     * @param procedureName in sql
-     * @param parameters    all parameters to procedure in order
-     * @param <T>           type of last output parameter
-     * @return single primitive output
+     * Compatible with Oracle
      */
     @SuppressWarnings("unchecked")
     @Transactional
-    public <T> T procedureResult(String procedureName, Object... parameters) {
-        StoredProcedureQuery query = procedureQuery(procedureName, parameters);
-        return (T) query.getOutputParameterValue(parameters.length + 1);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T, S> Pair<T, S> procedureResultPair(String procedureName, Object... parameters) {
-        StoredProcedureQuery query = procedureQuery(procedureName, parameters);
-        return PairUtil.of(
-                (T) query.getOutputParameterValue(parameters.length + 1),
-                (S) query.getOutputParameterValue(parameters.length + 2)
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> List<T> dynamicProcedure(Class<T> resultClasses, String procedureName, Object... parameters) {
-        StoredProcedureQuery query = entityManager.createStoredProcedureQuery(procedureName, resultClasses);
-        for (int i = 0; i < parameters.length; ++i) {
-            Class type = parameters[i] != null ? parameters[i].getClass() : String.class;
-            query.registerStoredProcedureParameter(i + 1, type, ParameterMode.IN);
+    public <T> List<T> executeProcedure2(Class<T> tClass, String procedureName, Object... params) {
+        if (dataBaseConfig.isOracle()) {
+            Query nativeQuery = storedProcedureUtilService.commonProcedure(procedureName, tClass, params);
+            return nativeQuery.getResultList();
         }
-        return procedureQueryInternal(query, parameters).getResultList();
+        return executeProcedure(procedureName, params);
     }
 
 
@@ -156,4 +92,53 @@ public class MyEntityManager {
     public <T> void persist(T object) {
         entityManager.persist(object);
     }
+
+    // should be transactional because call to executeProcedure (sonar)
+    @Transactional
+    public <T> T executeProcedureSingle(String procedureName, Object... parameters) {
+        List<T> list = executeProcedure(procedureName, parameters);
+        if (list.size() != 1) {
+            throw new MyRuntimeException("Procedure result is not single");
+        }
+        return list.get(0);
+    }
+
+    /**
+     * This method is used for procedure with single output parameter return type
+     * Should be transactional or execution from unit tests won't work
+     *
+     * @param procedureName in sql
+     * @param parameters    all parameters to procedure in order
+     * @param <T>           type of last output parameter
+     * @return single primitive output
+     */
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public <T> T procedureResult(String procedureName, Object... parameters) {
+        StoredProcedureQuery query = procedureQuery(procedureName, parameters);
+        return (T) query.getOutputParameterValue(parameters.length + 1);
+    }
+
+    public StoredProcedureQuery procedureQuery(String procedureName, Object... parameters) {
+        StoredProcedureQuery query = entityManager.createNamedStoredProcedureQuery(procedureName);
+        return StoredProcedureUtilService.procedureQueryInternal(query, parameters);
+    }
+
+    // should be transactional for BookingControllerIT
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public <T> List<T> executeProcedure(String procedureName, Object... parameters) {
+        return procedureQuery(procedureName, parameters).getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T, S> Pair<T, S> procedureResultPair(String procedureName, Object... parameters) {
+        StoredProcedureQuery query = procedureQuery(procedureName, parameters);
+        return PairUtil.of(
+                (T) query.getOutputParameterValue(parameters.length + 1),
+                (S) query.getOutputParameterValue(parameters.length + 2)
+        );
+    }
+
+
 }
