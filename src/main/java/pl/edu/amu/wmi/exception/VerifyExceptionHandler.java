@@ -20,4 +20,5 @@ public class VerifyExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+
 }
