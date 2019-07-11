@@ -32,7 +32,6 @@ public class StoredProcedureUtilService {
         return query;
     }
 
-    @SuppressWarnings("SqlResolve")
     public <T> Query internalCommonProcedure(String procedureName, Class<T> tClass, Object... parameters) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < parameters.length; i++) {
@@ -41,26 +40,24 @@ public class StoredProcedureUtilService {
                 builder.append(",");
             }
         }
-        Query query = getQuery(tClass);
-        query.setParameter(0, procedureName);
-        query.setParameter(1, builder.toString());
-        int correctedLength = parameters.length + 3;
-        for (int i = 0; i < correctedLength; ++i) {
-            query.setParameter(i, parameters[i]);
+        Query query = getQuery(tClass, procedureName, builder.toString());
+        for (int i = 1; i <= parameters.length; ++i) {
+            query.setParameter(i, parameters[i - 1]);
         }
         return query;
     }
 
-    @SuppressWarnings("SqlResolve")
-    private <T> Query getQuery(Class<T> tClass) {
+    private <T> Query getQuery(Class<T> tClass, String procedureName, String parametersToFill) {
         if (tClass != null) {
             if (dataBaseConfig.isOracle()) {
-                return entityManager.createNativeQuery("SELECT * FROM table(?(?))", tClass);
+                String format = String.format("SELECT * FROM table(%s(%s))", procedureName, parametersToFill);
+                return entityManager.createNativeQuery(format, tClass);
             }
             return entityManager.createNativeQuery("SELECT * FROM ?(?)", tClass);
         }
         if (dataBaseConfig.isOracle()) {
-            return entityManager.createNativeQuery("SELECT * FROM table(?(?))");
+            String format = String.format("SELECT * FROM table(%s(%s))", procedureName, parametersToFill);
+            return entityManager.createNativeQuery(format);
         }
         return entityManager.createNativeQuery("SELECT * FROM ?(?)");
     }
