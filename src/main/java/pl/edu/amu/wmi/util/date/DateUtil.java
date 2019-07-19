@@ -24,17 +24,18 @@ public class DateUtil {
     }
 
     public static Date getYearAgo() {
+        return getAgo(Calendar.YEAR);
+    }
+
+    private static Date getAgo(int year) {
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.YEAR, -1);
+        calendar.add(year, -1);
         return calendar.getTime();
     }
 
     public static Date getMonthAgo() {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.MONTH, -1);
-        return calendar.getTime();
+        return getAgo(Calendar.MONTH);
     }
 
     public static Date getMinuteAgo(Date date) {

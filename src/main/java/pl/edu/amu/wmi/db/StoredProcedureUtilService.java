@@ -33,13 +33,7 @@ public class StoredProcedureUtilService {
     }
 
     public <T> Query internalCommonProcedure(String procedureName, Class<T> tClass, Object... parameters) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < parameters.length; i++) {
-            builder.append("?");
-            if (i != parameters.length - 1) {
-                builder.append(",");
-            }
-        }
+        StringBuilder builder = getStringBuilder(parameters);
         Query query = getQuery(tClass, procedureName, builder.toString());
         for (int i = 1; i <= parameters.length; ++i) {
             query.setParameter(i, parameters[i - 1]);
@@ -74,6 +68,16 @@ public class StoredProcedureUtilService {
     // do not change that MappingException: No Dialect mapping for JDBC type: 1111
     @SuppressWarnings("squid:S2077")
     public void voidProcedure(String procedureName, Object... parameters) {
+        StringBuilder builder = getStringBuilder(parameters);
+        String sqlString = "SELECT 1 FROM " + procedureName + "(" + builder.toString() + ")";
+        Query query = entityManager.createNativeQuery(sqlString);
+        for (int i = 0; i < parameters.length; ++i) {
+            query.setParameter(i + 1, parameters[i]);
+        }
+        query.getSingleResult();
+    }
+
+    private StringBuilder getStringBuilder(Object[] parameters) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < parameters.length; i++) {
             builder.append("?");
@@ -81,12 +85,7 @@ public class StoredProcedureUtilService {
                 builder.append(",");
             }
         }
-        String sqlString = "SELECT 1 FROM " + procedureName + "(" + builder.toString() + ")";
-        Query query = entityManager.createNativeQuery(sqlString);
-        for (int i = 0; i < parameters.length; ++i) {
-            query.setParameter(i + 1, parameters[i]);
-        }
-        query.getSingleResult();
+        return builder;
     }
 
     @SuppressWarnings("unchecked")
